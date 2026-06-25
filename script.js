@@ -160,7 +160,7 @@ function startGame() {
   lives = 3;
 
   clearItems();
-  setMessage("Drag trash into the bin and avoid fish. You have 60 seconds!");
+  setMessage("Drag trash into the Charity Water bin and avoid harming fish. You have 60 seconds!");
   update();
 
   clearInterval(timer);
@@ -188,7 +188,7 @@ function resetGame() {
   time = MAX_TIME;
   lives = 3;
   clearItems();
-  setMessage("Press Start to begin cleaning the ocean.");
+  setMessage("Press Start to begin cleaning water for Charity Water.");
   update();
 }
 

@@ -1,3 +1,3 @@
-# Ocean Cleanup Game
+# Charity Water Cleanup Game
 
-A simple drag-and-drop ocean cleanup game where players collect trash, avoid fish, and try to keep the ocean healthy.
+A Charity Water-themed cleanup game where players collect trash to protect water, avoid harming fish, and keep the ocean healthy. Uses a Charity Water color palette and water drop icon styling.
