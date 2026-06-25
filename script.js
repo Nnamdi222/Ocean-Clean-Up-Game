@@ -5,18 +5,7 @@ const scoreEl = document.getElementById("score");
 const cleanEl = document.getElementById("waterPercent");
 const timerEl = document.getElementById("timer");
 const livesEl = document.getElementById("lives");
-
-// FIX: message element may not exist → create fallback safely
-let messageEl = document.getElementById("message");
-
-if (!messageEl) {
-  messageEl = document.createElement("div");
-  messageEl.id = "message";
-  messageEl.style.textAlign = "center";
-  messageEl.style.margin = "10px";
-  messageEl.style.fontSize = "20px";
-  document.body.appendChild(messageEl);
-}
+const messageEl = document.getElementById("message");
 
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
@@ -43,23 +32,24 @@ function spawn() {
   if (!running) return;
 
   const item = document.createElement("div");
+
   const isTrash = Math.random() < 0.7;
 
   item.className = isTrash ? "trash" : "fish";
   item.textContent = isTrash ? "🥤" : "🐟";
   item.dataset.type = isTrash ? "trash" : "fish";
 
-  item.style.position = "absolute";
-  item.style.left = Math.random() * 80 + "%";
-  item.style.top = Math.random() * 70 + "%";
+  // FIXED positioning inside game area
+  item.style.left = Math.random() * (gameArea.clientWidth - 50) + "px";
+  item.style.top = Math.random() * (gameArea.clientHeight - 100) + "px";
 
   drag(item);
   gameArea.appendChild(item);
 
-  setTimeout(() => item.remove(), 5000);
+  setTimeout(() => item.remove(), 6000);
 }
 
-/* DRAG + DROP */
+/* DRAG SYSTEM */
 function drag(item) {
   let ox, oy;
 
@@ -109,7 +99,7 @@ function drag(item) {
   });
 }
 
-/* START */
+/* START GAME */
 function startGame() {
   if (running) return;
 
@@ -121,6 +111,7 @@ function startGame() {
   lives = 3;
 
   gameArea.innerHTML = "";
+  gameArea.appendChild(bin);
   messageEl.textContent = "";
 
   update();
@@ -129,8 +120,6 @@ function startGame() {
   clearInterval(spawnTimer);
 
   timer = setInterval(() => {
-    if (!running) return;
-
     time--;
     update();
 
@@ -140,7 +129,7 @@ function startGame() {
   spawnTimer = setInterval(spawn, 900);
 }
 
-/* RESET */
+/* RESET GAME */
 function resetGame() {
   running = false;
 
@@ -153,12 +142,13 @@ function resetGame() {
   lives = 3;
 
   gameArea.innerHTML = "";
+  gameArea.appendChild(bin);
   messageEl.textContent = "";
 
   update();
 }
 
-/* WIN / LOSE */
+/* WIN */
 function win() {
   running = false;
   clearInterval(timer);
@@ -167,6 +157,7 @@ function win() {
   messageEl.textContent = "🎉 You cleaned the ocean!";
 }
 
+/* LOSE */
 function lose() {
   running = false;
   clearInterval(timer);
