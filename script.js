@@ -5,14 +5,10 @@ const scoreEl = document.getElementById("score");
 const cleanEl = document.getElementById("waterPercent");
 const timerEl = document.getElementById("timer");
 const livesEl = document.getElementById("lives");
-
-const overlay = document.getElementById("overlay");
-const title = document.getElementById("resultTitle");
-const msg = document.getElementById("resultMessage");
+const messageEl = document.getElementById("message");
 
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
-const playAgain = document.getElementById("playAgain");
 
 let score = 0;
 let clean = 0;
@@ -23,9 +19,7 @@ let running = false;
 let timer;
 let spawnTimer;
 
-/* 🚨 FORCE CLEAN STATE ON LOAD */
-overlay.classList.add("hidden");
-
+/* UPDATE UI */
 function update() {
   scoreEl.textContent = score;
   cleanEl.textContent = clean + "%";
@@ -33,7 +27,7 @@ function update() {
   livesEl.textContent = lives;
 }
 
-/* SPAWN */
+/* SPAWN ITEMS */
 function spawn() {
   if (!running) return;
 
@@ -53,7 +47,7 @@ function spawn() {
   setTimeout(() => item.remove(), 5000);
 }
 
-/* DRAG */
+/* DRAG + DROP */
 function drag(item) {
   let ox, oy;
 
@@ -86,6 +80,7 @@ function drag(item) {
         score += 10;
         clean = Math.min(100, clean + 5);
         item.remove();
+
         update();
 
         if (clean >= 100) win();
@@ -109,7 +104,7 @@ function startGame() {
   lives = 3;
 
   gameArea.innerHTML = "";
-  overlay.classList.add("hidden");
+  messageEl.textContent = "";
 
   update();
 
@@ -135,42 +130,37 @@ function resetGame() {
   clearInterval(timer);
   clearInterval(spawnTimer);
 
-  gameArea.innerHTML = "";
-  overlay.classList.add("hidden");
-
   score = 0;
   clean = 0;
   time = 60;
   lives = 3;
 
+  gameArea.innerHTML = "";
+  messageEl.textContent = "";
+
   update();
 }
 
-/* WIN / LOSE */
+/* WIN / LOSE (NO OVERLAY) */
 function win() {
-  end("You Win!", "Ocean fully cleaned 🌊");
-}
-
-function lose() {
-  end("Game Over", "Try again!");
-}
-
-function end(t, m) {
   running = false;
-
   clearInterval(timer);
   clearInterval(spawnTimer);
 
-  overlay.classList.remove("hidden");
-  title.textContent = t;
-  msg.textContent = m;
+  messageEl.textContent = "🎉 You cleaned the ocean!";
+}
+
+function lose() {
+  running = false;
+  clearInterval(timer);
+  clearInterval(spawnTimer);
+
+  messageEl.textContent = "💀 Game Over — try again!";
 }
 
 /* EVENTS */
 startBtn.onclick = startGame;
 resetBtn.onclick = resetGame;
-playAgain.onclick = resetGame;
 
 /* INIT */
 update();
-overlay.classList.add("hidden");
