@@ -5,7 +5,18 @@ const scoreEl = document.getElementById("score");
 const cleanEl = document.getElementById("waterPercent");
 const timerEl = document.getElementById("timer");
 const livesEl = document.getElementById("lives");
-const messageEl = document.getElementById("message");
+
+// FIX: message element may not exist → create fallback safely
+let messageEl = document.getElementById("message");
+
+if (!messageEl) {
+  messageEl = document.createElement("div");
+  messageEl.id = "message";
+  messageEl.style.textAlign = "center";
+  messageEl.style.margin = "10px";
+  messageEl.style.fontSize = "20px";
+  document.body.appendChild(messageEl);
+}
 
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
@@ -38,6 +49,7 @@ function spawn() {
   item.textContent = isTrash ? "🥤" : "🐟";
   item.dataset.type = isTrash ? "trash" : "fish";
 
+  item.style.position = "absolute";
   item.style.left = Math.random() * 80 + "%";
   item.style.top = Math.random() * 70 + "%";
 
@@ -76,14 +88,19 @@ function drag(item) {
         r.top < b.bottom &&
         r.bottom > b.top;
 
-      if (hit && item.dataset.type === "trash") {
-        score += 10;
-        clean = Math.min(100, clean + 5);
-        item.remove();
+      if (hit) {
+        if (item.dataset.type === "trash") {
+          score += 10;
+          clean = Math.min(100, clean + 5);
+        } else {
+          lives -= 1;
+        }
 
+        item.remove();
         update();
 
         if (clean >= 100) win();
+        if (lives <= 0) lose();
       }
     }
 
@@ -141,7 +158,7 @@ function resetGame() {
   update();
 }
 
-/* WIN / LOSE (NO OVERLAY) */
+/* WIN / LOSE */
 function win() {
   running = false;
   clearInterval(timer);
@@ -159,8 +176,8 @@ function lose() {
 }
 
 /* EVENTS */
-startBtn.onclick = startGame;
-resetBtn.onclick = resetGame;
+startBtn.addEventListener("click", startGame);
+resetBtn.addEventListener("click", resetGame);
 
 /* INIT */
 update();
