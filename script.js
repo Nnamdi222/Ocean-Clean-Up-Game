@@ -15,7 +15,7 @@ const resultMessage = document.getElementById("resultMessage");
 const playAgain = document.getElementById("playAgain");
 
 let score = 0;
-let clean = 0; // 🌊 NEW: ocean cleanliness
+let clean = 0;
 let time = 60;
 let lives = 3;
 
@@ -24,6 +24,12 @@ let timer;
 let spawnTimer;
 let bin;
 
+/* 🧨 CRITICAL FIX: FORCE OVERLAY OFF ON LOAD */
+overlay.classList.add("hidden");
+
+/* ==========================
+   UI UPDATE
+========================== */
 function update() {
   scoreDisplay.textContent = score;
   waterDisplay.textContent = clean + "%";
@@ -33,17 +39,20 @@ function update() {
   updateOcean();
 }
 
-/* 🌊 OCEAN VISUAL TRANSFORMATION */
+/* ==========================
+   OCEAN VISUAL STATE
+========================== */
 function updateOcean() {
   const darkness = 0.55 - (clean / 100) * 0.55;
-  const blueShift = clean * 2;
 
   oceanOverlay.style.background = `
-    rgba(0, ${40 + blueShift}, ${80 + blueShift * 2}, ${Math.max(darkness, 0)})
+    rgba(0, ${40 + clean * 2}, ${80 + clean * 2}, ${Math.max(darkness, 0)})
   `;
 }
 
-/* BIN */
+/* ==========================
+   BIN
+========================== */
 function createBin() {
   bin = document.createElement("div");
   bin.id = "trashBin";
@@ -51,7 +60,9 @@ function createBin() {
   gameArea.appendChild(bin);
 }
 
-/* SPAWN */
+/* ==========================
+   SPAWN OBJECTS
+========================== */
 function spawn() {
   if (!gameRunning) return;
 
@@ -59,9 +70,15 @@ function spawn() {
 
   const r = Math.random();
 
-  item.classList.add(r < 0.7 ? "trash" : "fish");
-  item.textContent = r < 0.7 ? "🥤" : "🐟";
-  item.dataset.type = r < 0.7 ? "trash" : "fish";
+  if (r < 0.7) {
+    item.className = "trash";
+    item.textContent = "🥤";
+    item.dataset.type = "trash";
+  } else {
+    item.className = "fish";
+    item.textContent = "🐟";
+    item.dataset.type = "fish";
+  }
 
   item.style.left = Math.random() * 80 + "%";
   item.style.top = Math.random() * 70 + "%";
@@ -69,10 +86,14 @@ function spawn() {
   drag(item);
   gameArea.appendChild(item);
 
-  setTimeout(() => item.remove(), 5000);
+  setTimeout(() => {
+    if (item.parentNode) item.remove();
+  }, 5000);
 }
 
-/* DRAG */
+/* ==========================
+   DRAG SYSTEM
+========================== */
 function drag(item) {
   let ox, oy;
 
@@ -100,7 +121,7 @@ function drag(item) {
         : "translateX(-50%) scale(1)";
     }
 
-    function drop(e) {
+    function drop() {
       document.removeEventListener("pointermove", move);
       document.removeEventListener("pointerup", drop);
 
@@ -115,12 +136,9 @@ function drag(item) {
 
       if (hit && item.dataset.type === "trash") {
         score += 10;
-        clean = Math.min(100, clean + 6); // 🌊 KEY CHANGE
+        clean = Math.min(100, clean + 6);
 
         item.classList.add("pop");
-
-        showPoints("+10", "lime", item);
-
         setTimeout(() => item.remove(), 120);
       }
 
@@ -132,19 +150,9 @@ function drag(item) {
   });
 }
 
-/* POINTS */
-function showPoints(text, color, item) {
-  const p = document.createElement("div");
-  p.className = "points";
-  p.textContent = text;
-  p.style.color = color;
-  p.style.left = item.style.left;
-  p.style.top = item.style.top;
-  gameArea.appendChild(p);
-  setTimeout(() => p.remove(), 800);
-}
-
-/* START */
+/* ==========================
+   START GAME (FIXED)
+========================== */
 function startGame() {
   if (gameRunning) return;
 
@@ -156,39 +164,55 @@ function startGame() {
   lives = 3;
 
   gameArea.innerHTML = "";
-  createBin();
+  overlay.classList.add("hidden");
 
+  createBin();
   update();
 
-  timer = setInterval(() => {
-    time--;
-    update();
-    if (time <= 0) endGame("Time's Up", "The ocean needs more cleaning!");
-  }, 1000);
-
-  spawnTimer = setInterval(spawn, 800);
-}
-
-/* RESET */
-function resetGame() {
+  /* 🧨 SAFETY: CLEAR OLD INTERVALS */
   clearInterval(timer);
   clearInterval(spawnTimer);
 
-  gameRunning = false;
-  gameArea.innerHTML = "";
+  timer = setInterval(() => {
+    if (!gameRunning) return;
 
-  overlay.classList.add("hidden");
+    time--;
+    update();
+
+    if (time <= 0) {
+      endGame("Time's Up", "Try again!");
+    }
+  }, 1000);
+
+  spawnTimer = setInterval(spawn, 900);
+}
+
+/* ==========================
+   RESET (SAFE)
+========================== */
+function resetGame() {
+  gameRunning = false;
+
+  clearInterval(timer);
+  clearInterval(spawnTimer);
 
   score = 0;
   clean = 0;
   time = 60;
   lives = 3;
 
+  gameArea.innerHTML = "";
+  overlay.classList.add("hidden");
+
   update();
 }
 
-/* END */
+/* ==========================
+   END GAME (FIXED)
+========================== */
 function endGame(title, msg) {
+  if (!gameRunning) return;
+
   gameRunning = false;
 
   clearInterval(timer);
@@ -204,4 +228,6 @@ startBtn.onclick = startGame;
 resetBtn.onclick = resetGame;
 playAgain.onclick = resetGame;
 
+/* INIT SAFE STATE */
 update();
+overlay.classList.add("hidden");
