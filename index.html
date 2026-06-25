@@ -19,6 +19,7 @@
   <!-- DASHBOARD -->
   <div class="dashboard">
     <div>Score: <span id="score">0</span></div>
+    <div>Best: <span id="highScore">0</span></div>
     <div>Clean: <span id="waterPercent">0%</span></div>
     <div>Time: <span id="timer">60</span></div>
     <div>Lives: <span id="lives">3</span></div>
@@ -30,10 +31,15 @@
     <button id="resetBtn">Reset Game</button>
   </div>
 
+  <div id="message" aria-live="polite">Press Start to begin cleaning the ocean.</div>
+  <div id="cleanMeter" aria-label="Water cleanliness">
+    <div id="cleanBar"></div>
+  </div>
+
   <!-- GAME AREA -->
   <section id="gameArea">
-    <div id="trashBin" aria-label="Trash Bin">🗑️ BIN</div>
     <div id="oceanOverlay"></div>
+    <div id="trashBin" aria-label="Trash Bin">🗑️ BIN</div>
   </section>
 
 </main>
