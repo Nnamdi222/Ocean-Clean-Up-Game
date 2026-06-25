@@ -17,7 +17,7 @@ const playAgain = document.getElementById("playAgain");
 const factBox = document.getElementById("factBox");
 
 let score = 0;
-let water = 0;
+let water = 0; // clean water %
 let time = 60;
 let gameRunning = false;
 
@@ -25,268 +25,170 @@ let timer;
 let spawnTimer;
 
 const facts = [
-"Every person deserves clean water.",
-"Clean water improves health.",
-"charity: water funds clean water projects worldwide.",
-"Protecting oceans protects drinking water.",
-"Small actions create big change."
+  "Every person deserves clean water.",
+  "Clean water improves health.",
+  "charity: water funds clean water projects worldwide.",
+  "Protecting oceans protects drinking water.",
+  "Small actions create big change."
 ];
 
-highScoreDisplay.textContent =
-localStorage.getItem("highScore") || 0;
+highScoreDisplay.textContent = localStorage.getItem("highScore") || 0;
 
-function updateDisplays(){
-
-scoreDisplay.textContent = score;
-
-waterPercent.textContent = water + "%";
-
-waterFill.style.width = water + "%";
-
-timerDisplay.textContent = time;
-
+function updateDisplays() {
+  scoreDisplay.textContent = score;
+  waterPercent.textContent = water + "%";
+  waterFill.style.width = water + "%";
+  timerDisplay.textContent = time;
 }
 
-function randomFact(){
-
-factBox.textContent =
-facts[Math.floor(Math.random()*facts.length)];
-
+function randomFact() {
+  factBox.textContent = facts[Math.floor(Math.random() * facts.length)];
 }
 
-function spawnObject(){
+function spawnObject() {
+  if (!gameRunning) return;
 
-if(!gameRunning) return;
+  const item = document.createElement("div");
+  const r = Math.random();
 
-const item=document.createElement("div");
+  if (r < 0.6) {
+    item.className = "trash";
+    item.textContent = ["🥤", "🥫", "🛍️"][Math.floor(Math.random() * 3)];
+    item.dataset.type = "trash";
+  } 
+  else if (r < 0.85) {
+    item.className = "fish";
+    item.textContent = "🐟";
+    item.dataset.type = "fish";
+  } 
+  else {
+    item.className = "turtle";
+    item.textContent = "🐢";
+    item.dataset.type = "turtle";
+  }
 
-const r=Math.random();
+  item.style.left = Math.random() * 90 + "%";
+  item.style.top = Math.random() * 75 + "%";
 
-if(r<0.6){
+  gameArea.appendChild(item);
 
-item.className="trash";
+  item.onclick = function () {
+    if (!gameRunning) return;
 
-const trash=["🥤","🥫","🛍️"];
+    if (item.dataset.type === "trash") {
+      score += 10;
+      water = Math.min(100, water + 5); // cleaning water
+      showPoints("+10", "green", item);
+    }
 
-item.textContent=
-trash[Math.floor(Math.random()*trash.length)];
+    if (item.dataset.type === "fish") {
+      score += 5;
+      water = Math.min(100, water + 3);
+      showPoints("+5", "blue", item);
+    }
 
-item.dataset.type="trash";
+    if (item.dataset.type === "turtle") {
+      score += 15;
+      water = Math.min(100, water + 8);
+      showPoints("+15", "gold", item);
+    }
 
-}else if(r<0.8){
+    updateDisplays();
+    randomFact();
+    item.remove();
 
-item.className="fish";
+    checkWin();
+  };
 
-item.textContent="🐟";
-
-item.dataset.type="fish";
-
-}else{
-
-item.className="turtle";
-
-item.textContent="🐢";
-
-item.dataset.type="turtle";
-
+  setTimeout(() => {
+    if (item.parentNode) item.remove();
+  }, 5000);
 }
 
-item.style.left=Math.random()*90+"%";
+function showPoints(text, color, item) {
+  const p = document.createElement("span");
+  p.className = "points";
+  p.textContent = text;
+  p.style.color = color;
+  p.style.left = item.style.left;
+  p.style.top = item.style.top;
+  gameArea.appendChild(p);
 
-item.style.top=Math.random()*75+"%";
-
-gameArea.appendChild(item);
-
-item.onclick=function(){
-
-if(!gameRunning) return;
-
-if(item.dataset.type==="trash"){
-
-score+=10;
-
-water=Math.min(100,water+5);
-
-showPoints("+10","green",item);
-
-}else if(item.dataset.type==="fish"){
-
-score=Math.max(0,score-10);
-
-water=Math.max(0,water-5);
-
-showPoints("-10","red",item);
-
-}else{
-
-score=Math.max(0,score-15);
-
-showPoints("-15","red",item);
-
+  setTimeout(() => p.remove(), 1000);
 }
 
-updateDisplays();
+function startGame() {
+  if (gameRunning) return;
 
-randomFact();
+  gameRunning = true;
+  score = 0;
+  water = 0;
+  time = 60;
 
-item.remove();
+  updateDisplays();
+  gameArea.innerHTML = "";
 
-checkWin();
+  timer = setInterval(() => {
+    time--;
+    updateDisplays();
 
-};
+    if (time <= 0) loseGame();
+  }, 1000);
 
-setTimeout(()=>{
-
-if(item.parentNode){
-
-item.remove();
-
+  spawnTimer = setInterval(spawnObject, 800);
 }
 
-},5000);
+function resetGame() {
+  clearInterval(timer);
+  clearInterval(spawnTimer);
 
+  gameRunning = false;
+  score = 0;
+  water = 0;
+  time = 60;
+
+  overlay.classList.add("hidden");
+  gameArea.innerHTML = "";
+
+  updateDisplays();
 }
 
-function showPoints(text,color,item){
-
-const p=document.createElement("span");
-
-p.className="points";
-
-p.textContent=text;
-
-p.style.color=color;
-
-p.style.left=item.style.left;
-
-p.style.top=item.style.top;
-
-gameArea.appendChild(p);
-
-setTimeout(()=>{
-
-p.remove();
-
-},1000);
-
+function checkWin() {
+  if (water >= 100) {
+    endGame("You Win!", "You restored clean water to the island! 🌊✨");
+  }
 }
 
-function startGame(){
-
-if(gameRunning) return;
-
-gameRunning=true;
-
-score=0;
-
-water=0;
-
-time=60;
-
-updateDisplays();
-
-gameArea.innerHTML="";
-
-timer=setInterval(()=>{
-
-time--;
-
-updateDisplays();
-
-if(time<=0){
-
-loseGame();
-
+function loseGame() {
+  endGame("Time's Up", "Try again and clean more of the environment!");
 }
 
-},1000);
+function endGame(title, message) {
+  clearInterval(timer);
+  clearInterval(spawnTimer);
+  gameRunning = false;
 
-spawnTimer=setInterval(spawnObject,700);
+  overlay.classList.remove("hidden");
+  resultTitle.textContent = title;
+  resultMessage.textContent = message;
 
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 200,
+      spread: 100,
+      origin: { y: 0.6 }
+    });
+  }
+
+  const high = Number(localStorage.getItem("highScore") || 0);
+  if (score > high) {
+    localStorage.setItem("highScore", score);
+    highScoreDisplay.textContent = score;
+  }
 }
 
-function resetGame(){
-
-clearInterval(timer);
-
-clearInterval(spawnTimer);
-
-gameRunning=false;
-
-score=0;
-
-water=0;
-
-time=60;
-
-overlay.classList.add("hidden");
-
-gameArea.innerHTML="";
-
-updateDisplays();
-
-}
-
-function checkWin(){
-
-if(water>=100){
-
-clearInterval(timer);
-
-clearInterval(spawnTimer);
-
-gameRunning=false;
-
-overlay.classList.remove("hidden");
-
-resultTitle.textContent="You Win!";
-
-resultMessage.textContent="You restored clean water to the island!";
-
-confetti({
-
-particleCount:200,
-
-spread:100,
-
-origin:{y:.6}
-
-});
-
-if(score>
-
-Number(localStorage.getItem("highScore")||0)){
-
-localStorage.setItem("highScore",score);
-
-highScoreDisplay.textContent=score;
-
-}
-
-}
-
-}
-
-function loseGame(){
-
-clearInterval(timer);
-
-clearInterval(spawnTimer);
-
-gameRunning=false;
-
-overlay.classList.remove("hidden");
-
-resultTitle.textContent="Time's Up";
-
-resultMessage.textContent="Try again and remove more pollution!";
-
-}
-
-startBtn.onclick=startGame;
-
-resetBtn.onclick=resetGame;
-
-playAgain.onclick=resetGame;
+startBtn.onclick = startGame;
+resetBtn.onclick = resetGame;
+playAgain.onclick = resetGame;
 
 updateDisplays();
