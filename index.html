@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ocean Game FIXED</title>
-<link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ocean Game FIXED</title>
+
+  <link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
@@ -13,19 +14,32 @@
   <h1>🌊 Ocean Cleanup</h1>
 </header>
 
-<div class="dashboard">
-  <div>Score: <span id="score">0</span></div>
-  <div>Clean: <span id="waterPercent">0%</span></div>
-  <div>Time: <span id="timer">60</span></div>
-  <div>Lives: <span id="lives">3</span></div>
-</div>
+<main>
 
-<button id="startBtn">Start</button>
-<button id="resetBtn">Reset</button>
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+    <div>Score: <span id="score">0</span></div>
+    <div>Clean: <span id="waterPercent">0%</span></div>
+    <div>Time: <span id="timer">60</span></div>
+    <div>Lives: <span id="lives">3</span></div>
+  </div>
 
-<div id="gameArea">
-  <div id="trashBin">🗑️ BIN</div>
-  <div id="oceanOverlay"></div>
-</div>
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button id="startBtn">Start Game</button>
+    <button id="resetBtn">Reset Game</button>
+  </div>
+
+  <!-- GAME AREA -->
+  <section id="gameArea">
+    <div id="trashBin" aria-label="Trash Bin">🗑️ BIN</div>
+    <div id="oceanOverlay"></div>
+  </section>
+
+</main>
+
+<!-- IMPORTANT: LINK YOUR GAME LOGIC -->
+<script src="script.js" defer></script>
+
 </body>
 </html>
