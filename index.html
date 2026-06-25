@@ -1,218 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ocean Cleanup Game</title>
 
-    <title>Island Clean Up | Inspired by charity: water</title>
-
-    <meta name="description"
-        content="Help restore clean water by collecting trash while protecting marine life.">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
+<link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
 
 <header>
-
-    <div class="logo">
-
-        💧
-
-    </div>
-
-    <div>
-
-        <h1>Island Clean Up</h1>
-
-        <p>
-            Inspired by charity: water's mission to provide clean water for everyone.
-        </p>
-
-    </div>
-
+  <div class="logo">🌊</div>
+  <div>
+    <h1>Ocean Cleanup Game</h1>
+    <p>Drag trash into the bin to clean the ocean</p>
+  </div>
 </header>
 
 <section class="dashboard">
-
-    <div class="panel">
-
-        <h3>⭐ Score</h3>
-
-        <p id="score">0</p>
-
-    </div>
-
-    <div class="panel">
-
-        <h3>🏆 High Score</h3>
-
-        <p id="highScore">0</p>
-
-    </div>
-
-    <div class="panel">
-
-        <h3>💧 Water Quality</h3>
-
-        <div class="progress">
-
-            <div id="waterFill"></div>
-
-        </div>
-
-        <span id="waterPercent">0%</span>
-
-    </div>
-
-    <div class="panel">
-
-        <h3>⏱ Time</h3>
-
-        <p id="timer">60</p>
-
-    </div>
-
+  <div class="panel"><h3>Score</h3><p id="score">0</p></div>
+  <div class="panel"><h3>Water Clean</h3><p id="waterPercent">0%</p></div>
+  <div class="panel"><h3>Time</h3><p id="timer">60</p></div>
+  <div class="panel"><h3>High Score</h3><p id="highScore">0</p></div>
 </section>
 
-<section class="message-area">
-
-    <p id="factBox">
-
-        Every person deserves access to clean and safe drinking water.
-
-    </p>
-
-</section>
-
-<main id="gameArea">
-
-    <!-- Items appear here with JavaScript -->
-
-</main>
-
-<section class="controls">
-
-    <button id="startBtn">
-
-        ▶ Start Game
-
-    </button>
-
-    <button id="resetBtn">
-
-        🔄 Reset
-
-    </button>
-
-</section>
-
-<section class="legend">
-
-    <h2>How to Play</h2>
-
-    <div class="legend-grid">
-
-        <div class="legend-card">
-
-            🥤
-
-            <h3>Plastic Bottle</h3>
-
-            <p>+10 points</p>
-
-        </div>
-
-        <div class="legend-card">
-
-            🥫
-
-            <h3>Can</h3>
-
-            <p>+10 points</p>
-
-        </div>
-
-        <div class="legend-card">
-
-            🛍️
-
-            <h3>Plastic Bag</h3>
-
-            <p>+15 points</p>
-
-        </div>
-
-        <div class="legend-card bad">
-
-            🐟
-
-            <h3>Fish</h3>
-
-            <p>-10 points</p>
-
-        </div>
-
-        <div class="legend-card bad">
-
-            🐢
-
-            <h3>Turtle</h3>
-
-            <p>-15 points</p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<div id="overlay" class="hidden">
-
-    <div class="popup">
-
-        <h2 id="resultTitle"></h2>
-
-        <p id="resultMessage"></p>
-
-        <button id="playAgain">
-
-            Play Again
-
-        </button>
-
-    </div>
-
+<div class="controls">
+  <button id="startBtn">Start</button>
+  <button id="resetBtn">Reset</button>
 </div>
 
-<footer>
+<div class="message-area">
+  <div id="factBox">Click Start to begin cleaning the ocean!</div>
+</div>
 
-    <h3>Why Clean Water Matters</h3>
+<div id="gameArea"></div>
 
-    <p>
+<!-- GAME OVER -->
+<div id="overlay" class="hidden">
+  <div class="popup">
+    <h2 id="resultTitle"></h2>
+    <p id="resultMessage"></p>
+    <button id="playAgain">Play Again</button>
+  </div>
+</div>
 
-        Clean water improves health, education, and opportunity.
-        This game was inspired by charity: water's mission to bring
-        safe drinking water to communities around the world.
-
-    </p>
-
-</footer>
-
-<script src="script.js"></script>
-
+<script src="game.js"></script>
 </body>
-
 </html>
