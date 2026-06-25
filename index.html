@@ -3,37 +3,32 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ocean Cleanup Evolution</title>
+<title>Ocean Game FIXED</title>
 <link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">🌊</div>
-  <div>
-    <h1>Ocean Cleanup Evolution</h1>
-    <p>Watch the ocean become cleaner as you play</p>
-  </div>
+  <h1>🌊 Ocean Cleanup</h1>
 </header>
 
-<section class="dashboard">
-  <div class="panel"><h3>Score</h3><p id="score">0</p></div>
-  <div class="panel"><h3>Cleanliness</h3><p id="waterPercent">0%</p></div>
-  <div class="panel"><h3>Time</h3><p id="timer">60</p></div>
-  <div class="panel"><h3>Lives</h3><p id="lives">3</p></div>
-</section>
-
-<div class="controls">
-  <button id="startBtn">Start</button>
-  <button id="resetBtn">Reset</button>
+<div class="dashboard">
+  <div>Score: <span id="score">0</span></div>
+  <div>Clean: <span id="waterPercent">0%</span></div>
+  <div>Time: <span id="timer">60</span></div>
+  <div>Lives: <span id="lives">3</span></div>
 </div>
 
+<button id="startBtn">Start</button>
+<button id="resetBtn">Reset</button>
+
 <div id="gameArea">
-  <div id="trashBin">🗑️ DROP ZONE</div>
+  <div id="trashBin">🗑️ BIN</div>
   <div id="oceanOverlay"></div>
 </div>
 
+<!-- 🚨 MUST START HIDDEN -->
 <div id="overlay" class="hidden">
   <div class="popup">
     <h2 id="resultTitle"></h2>
