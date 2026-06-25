@@ -697,5 +697,31 @@ RESPONSIVE DESIGN
 
     }
 
+#trashBin {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 180px;
+    height: 120px;
+
+    background: rgba(0,0,0,0.4);
+    border: 3px dashed white;
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    font-weight: bold;
+
+    z-index: 50;
+}
+   .pop {
+    transform: scale(0.6);
+    opacity: 0;
+    transition: 0.15s;
 
 }
