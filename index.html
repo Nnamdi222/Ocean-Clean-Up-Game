@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ocean Cleanup Game</title>
-
+<title>Ocean Cleanup Evolution</title>
 <link rel="stylesheet" href="style.css"/>
 </head>
 
@@ -13,16 +12,16 @@
 <header>
   <div class="logo">🌊</div>
   <div>
-    <h1>Ocean Cleanup Game</h1>
-    <p>Drag trash into the bin to clean the ocean</p>
+    <h1>Ocean Cleanup Evolution</h1>
+    <p>Watch the ocean become cleaner as you play</p>
   </div>
 </header>
 
 <section class="dashboard">
   <div class="panel"><h3>Score</h3><p id="score">0</p></div>
-  <div class="panel"><h3>Water Clean</h3><p id="waterPercent">0%</p></div>
+  <div class="panel"><h3>Cleanliness</h3><p id="waterPercent">0%</p></div>
   <div class="panel"><h3>Time</h3><p id="timer">60</p></div>
-  <div class="panel"><h3>High Score</h3><p id="highScore">0</p></div>
+  <div class="panel"><h3>Lives</h3><p id="lives">3</p></div>
 </section>
 
 <div class="controls">
@@ -30,13 +29,11 @@
   <button id="resetBtn">Reset</button>
 </div>
 
-<div class="message-area">
-  <div id="factBox">Click Start to begin cleaning the ocean!</div>
+<div id="gameArea">
+  <div id="trashBin">🗑️ DROP ZONE</div>
+  <div id="oceanOverlay"></div>
 </div>
 
-<div id="gameArea"></div>
-
-<!-- GAME OVER -->
 <div id="overlay" class="hidden">
   <div class="popup">
     <h2 id="resultTitle"></h2>
