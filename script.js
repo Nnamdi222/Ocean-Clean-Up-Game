@@ -1,9 +1,10 @@
 const gameArea = document.getElementById("gameArea");
+const oceanOverlay = document.getElementById("oceanOverlay");
 
 const scoreDisplay = document.getElementById("score");
+const waterDisplay = document.getElementById("waterPercent");
 const timerDisplay = document.getElementById("timer");
-const waterPercent = document.getElementById("waterPercent");
-const highScoreDisplay = document.getElementById("highScore");
+const livesDisplay = document.getElementById("lives");
 
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
@@ -14,31 +15,43 @@ const resultMessage = document.getElementById("resultMessage");
 const playAgain = document.getElementById("playAgain");
 
 let score = 0;
-let water = 0;
+let clean = 0; // 🌊 NEW: ocean cleanliness
 let time = 60;
+let lives = 3;
+
 let gameRunning = false;
 let timer;
 let spawnTimer;
 let bin;
 
-highScoreDisplay.textContent = localStorage.getItem("highScore") || 0;
+function update() {
+  scoreDisplay.textContent = score;
+  waterDisplay.textContent = clean + "%";
+  timerDisplay.textContent = time;
+  livesDisplay.textContent = lives;
 
-/* INIT BIN */
+  updateOcean();
+}
+
+/* 🌊 OCEAN VISUAL TRANSFORMATION */
+function updateOcean() {
+  const darkness = 0.55 - (clean / 100) * 0.55;
+  const blueShift = clean * 2;
+
+  oceanOverlay.style.background = `
+    rgba(0, ${40 + blueShift}, ${80 + blueShift * 2}, ${Math.max(darkness, 0)})
+  `;
+}
+
+/* BIN */
 function createBin() {
   bin = document.createElement("div");
   bin.id = "trashBin";
-  bin.textContent = "🗑️ BIN";
+  bin.textContent = "🗑️ DROP ZONE";
   gameArea.appendChild(bin);
 }
 
-/* UPDATE UI */
-function update() {
-  scoreDisplay.textContent = score;
-  waterPercent.textContent = water + "%";
-  timerDisplay.textContent = time;
-}
-
-/* SPAWN OBJECTS */
+/* SPAWN */
 function spawn() {
   if (!gameRunning) return;
 
@@ -46,68 +59,48 @@ function spawn() {
 
   const r = Math.random();
 
-  if (r < 0.6) {
-    item.className = "trash";
-    item.textContent = "🥤";
-    item.dataset.type = "trash";
-  } else if (r < 0.8) {
-    item.className = "fish";
-    item.textContent = "🐟";
-    item.dataset.type = "fish";
-  } else {
-    item.className = "turtle";
-    item.textContent = "🐢";
-    item.dataset.type = "turtle";
-  }
+  item.classList.add(r < 0.7 ? "trash" : "fish");
+  item.textContent = r < 0.7 ? "🥤" : "🐟";
+  item.dataset.type = r < 0.7 ? "trash" : "fish";
 
   item.style.left = Math.random() * 80 + "%";
   item.style.top = Math.random() * 70 + "%";
 
-  makeDraggable(item);
+  drag(item);
   gameArea.appendChild(item);
 
-  setTimeout(() => {
-    if (item.dataset.type === "trash") {
-      score = Math.max(0, score - 5);
-    }
-    item.remove();
-    update();
-  }, 5000);
+  setTimeout(() => item.remove(), 5000);
 }
 
 /* DRAG */
-function makeDraggable(item) {
-  let offsetX, offsetY;
+function drag(item) {
+  let ox, oy;
 
   item.addEventListener("pointerdown", (e) => {
     if (!gameRunning) return;
 
     const rect = item.getBoundingClientRect();
+    ox = e.clientX - rect.left;
+    oy = e.clientY - rect.top;
 
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-
-    item.classList.add("dragging");
+    item.style.zIndex = 999;
 
     function move(e) {
-      item.style.left = e.clientX - offsetX + "px";
-      item.style.top = e.clientY - offsetY + "px";
+      item.style.left = e.clientX - ox + "px";
+      item.style.top = e.clientY - oy + "px";
 
       const b = bin.getBoundingClientRect();
 
-      const hover =
-        e.clientX > b.left &&
-        e.clientX < b.right &&
-        e.clientY > b.top &&
-        e.clientY < b.bottom;
-
-      bin.classList.toggle("active", hover);
+      bin.style.transform =
+        (e.clientX > b.left &&
+         e.clientX < b.right &&
+         e.clientY > b.top &&
+         e.clientY < b.bottom)
+        ? "translateX(-50%) scale(1.1)"
+        : "translateX(-50%) scale(1)";
     }
 
     function drop(e) {
-      item.classList.remove("dragging");
-      bin.classList.remove("active");
-
       document.removeEventListener("pointermove", move);
       document.removeEventListener("pointerup", drop);
 
@@ -122,10 +115,13 @@ function makeDraggable(item) {
 
       if (hit && item.dataset.type === "trash") {
         score += 10;
-        water = Math.min(100, water + 6);
+        clean = Math.min(100, clean + 6); // 🌊 KEY CHANGE
+
         item.classList.add("pop");
 
-        setTimeout(() => item.remove(), 150);
+        showPoints("+10", "lime", item);
+
+        setTimeout(() => item.remove(), 120);
       }
 
       update();
@@ -136,27 +132,41 @@ function makeDraggable(item) {
   });
 }
 
+/* POINTS */
+function showPoints(text, color, item) {
+  const p = document.createElement("div");
+  p.className = "points";
+  p.textContent = text;
+  p.style.color = color;
+  p.style.left = item.style.left;
+  p.style.top = item.style.top;
+  gameArea.appendChild(p);
+  setTimeout(() => p.remove(), 800);
+}
+
 /* START */
 function startGame() {
   if (gameRunning) return;
 
   gameRunning = true;
+
   score = 0;
-  water = 0;
+  clean = 0;
   time = 60;
+  lives = 3;
 
   gameArea.innerHTML = "";
   createBin();
+
   update();
 
   timer = setInterval(() => {
     time--;
     update();
-
-    if (time <= 0) endGame();
+    if (time <= 0) endGame("Time's Up", "The ocean needs more cleaning!");
   }, 1000);
 
-  spawnTimer = setInterval(spawn, 900);
+  spawnTimer = setInterval(spawn, 800);
 }
 
 /* RESET */
@@ -165,33 +175,28 @@ function resetGame() {
   clearInterval(spawnTimer);
 
   gameRunning = false;
-
   gameArea.innerHTML = "";
+
   overlay.classList.add("hidden");
 
   score = 0;
-  water = 0;
+  clean = 0;
   time = 60;
+  lives = 3;
 
   update();
 }
 
 /* END */
-function endGame() {
+function endGame(title, msg) {
   gameRunning = false;
 
   clearInterval(timer);
   clearInterval(spawnTimer);
 
   overlay.classList.remove("hidden");
-
-  resultTitle.textContent = "Game Over";
-  resultMessage.textContent = "Try again to clean the ocean!";
-
-  const high = Number(localStorage.getItem("highScore") || 0);
-  if (score > high) {
-    localStorage.setItem("highScore", score);
-  }
+  resultTitle.textContent = title;
+  resultMessage.textContent = msg;
 }
 
 /* EVENTS */
