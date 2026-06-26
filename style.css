@@ -46,6 +46,18 @@ h1 {
   color: #012a40;
 }
 
+.donation-note {
+  margin-top: 8px;
+  color: #012a40;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, rgba(255, 213, 79, 0.18), rgba(22, 160, 133, 0.18));
+  padding: 8px 12px;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
 .charity-badge {
   display: inline-flex;
   align-items: center;
@@ -224,6 +236,27 @@ button:disabled {
 
 .item {
   animation: float 4.5s ease-in-out infinite;
+}
+
+.confetti {
+  position: fixed;
+  top: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.95;
+  border-radius: 2px;
+  animation: confetti-fall 4s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -100vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--x), 110vh, 0) rotate(720deg);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 650px) {

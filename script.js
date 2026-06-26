@@ -49,6 +49,43 @@ function setMessage(text) {
   messageEl.textContent = text;
 }
 
+function createConfetti() {
+  const colors = [
+    "#ff4757",
+    "#ffa502",
+    "#2ed573",
+    "#1e90ff",
+    "#70a1ff",
+    "#ff6b81",
+    "#2f3542",
+    "#ff7f50",
+    "#3742fa",
+    "#70ffea",
+    "#eccc68",
+    "#fffa65"
+  ];
+  const confettiCount = 110;
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < confettiCount; i += 1) {
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.left = `${Math.random() * 100}%`;
+    confetti.style.setProperty("--x", `${(Math.random() - 0.5) * 260}px`);
+    confetti.style.animationDelay = `${Math.random() * 0.8}s`;
+    confetti.style.width = `${5 + Math.random() * 10}px`;
+    confetti.style.height = `${10 + Math.random() * 14}px`;
+    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+    fragment.appendChild(confetti);
+  }
+
+  document.body.appendChild(fragment);
+  setTimeout(() => {
+    document.querySelectorAll(".confetti").forEach((piece) => piece.remove());
+  }, 4200);
+}
+
 function clearItems() {
   gameArea.querySelectorAll(".item").forEach((item) => item.remove());
 }
@@ -197,7 +234,11 @@ function win() {
   running = false;
   clearInterval(timer);
   clearInterval(spawnTimer);
-  setMessage("🎉 You cleaned the ocean! Great job!");
+  const donationAmount = Math.floor(score / 100);
+  setMessage(
+    `🎉 You cleaned the ocean! Great job! ${donationAmount} donation${donationAmount === 1 ? "" : "s"} toward Charity Water.`
+  );
+  createConfetti();
   update();
 }
 
