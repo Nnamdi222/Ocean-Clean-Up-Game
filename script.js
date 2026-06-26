@@ -72,18 +72,23 @@ function createConfetti() {
     confetti.className = "confetti";
     confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
     confetti.style.left = `${Math.random() * 100}%`;
+    confetti.style.top = `-30px`;
     confetti.style.setProperty("--x", `${(Math.random() - 0.5) * 260}px`);
+    confetti.style.setProperty("--rotation", `${Math.random() * 360}deg`);
     confetti.style.animationDelay = `${Math.random() * 0.8}s`;
     confetti.style.width = `${5 + Math.random() * 10}px`;
     confetti.style.height = `${10 + Math.random() * 14}px`;
-    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+    confetti.style.position = "fixed";
+    confetti.style.zIndex = "9999";
+    confetti.style.opacity = "0.98";
+    confetti.style.willChange = "transform, opacity";
     fragment.appendChild(confetti);
   }
 
   document.body.appendChild(fragment);
   setTimeout(() => {
     document.querySelectorAll(".confetti").forEach((piece) => piece.remove());
-  }, 4200);
+  }, 5000);
 }
 
 function clearItems() {
