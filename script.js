@@ -23,8 +23,47 @@ let timer;
 let spawnTimer;
 
 const MAX_TIME = 60;
-const SPAWN_BASE = 900;
+const SPAWN_BASE = 700;
 const CLEAN_GOAL = 100;
+
+const itemTypes = {
+  trash: {
+    className: "trash",
+    emoji: "🥤",
+    score: 10,
+    clean: 5,
+    message: "✅ Trash collected! The beach is looking brighter."
+  },
+  fish: {
+    className: "fish",
+    emoji: "🐟",
+    score: -5,
+    life: -1,
+    message: "⚠️ Fish belong in the ocean — leave them be."
+  },
+  jellyfish: {
+    className: "jellyfish",
+    emoji: "🪼",
+    score: -8,
+    clean: -3,
+    life: -1,
+    message: "⚠️ A jellyfish sting slows the cleanup."
+  },
+  seaweed: {
+    className: "seaweed",
+    emoji: "🌿",
+    score: -6,
+    life: -1,
+    message: "⚠️ Seaweed tangles the cleanup crew."
+  },
+  crab: {
+    className: "crab",
+    emoji: "🦀",
+    score: -7,
+    life: -1,
+    message: "⚠️ Crabs are beach helpers — avoid them!"
+  }
+};
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -95,15 +134,24 @@ function clearItems() {
   gameArea.querySelectorAll(".item").forEach((item) => item.remove());
 }
 
+function getRandomType() {
+  const roll = Math.random();
+  if (roll < 0.55) return "trash";
+  if (roll < 0.75) return "fish";
+  if (roll < 0.87) return "jellyfish";
+  if (roll < 0.94) return "seaweed";
+  return "crab";
+}
+
 function spawn() {
   if (!running) return;
 
   const item = document.createElement("div");
-  const isTrash = Math.random() < 0.68;
-  const type = isTrash ? "trash" : "fish";
+  const type = getRandomType();
+  const itemConfig = itemTypes[type];
 
-  item.className = `item ${type}`;
-  item.textContent = isTrash ? "🥤" : "🐟";
+  item.className = `item ${itemConfig.className}`;
+  item.textContent = itemConfig.emoji;
   item.dataset.type = type;
 
   const size = 34 + Math.random() * 18;
@@ -166,15 +214,11 @@ function attachDrag(item) {
         currentRect.bottom > binRect.top;
 
       if (hit) {
-        if (item.dataset.type === "trash") {
-          score += 10;
-          clean = Math.min(CLEAN_GOAL, clean + 5);
-          setMessage("✅ Trash collected! Keep the ocean clean.");
-        } else {
-          lives -= 1;
-          score = Math.max(0, score - 5);
-          setMessage("⚠️ Don't throw fish in the bin. Keep them in the ocean.");
-        }
+        const itemConfig = itemTypes[item.dataset.type];
+        score = Math.max(0, score + (itemConfig.score || 0));
+        clean = clamp(clean + (itemConfig.clean || 0), 0, CLEAN_GOAL);
+        lives = Math.max(0, lives + (itemConfig.life || 0));
+        setMessage(itemConfig.message);
 
         item.remove();
         update();
@@ -202,7 +246,7 @@ function startGame() {
   lives = 3;
 
   clearItems();
-  setMessage("Drag trash into the Charity Water bin and avoid harming fish. You have 60 seconds!");
+  setMessage("Drag trash into the bin, dodge beach hazards, and keep the shore sparkling for 60 seconds!");
   update();
 
   clearInterval(timer);
@@ -230,7 +274,7 @@ function resetGame() {
   time = MAX_TIME;
   lives = 3;
   clearItems();
-  setMessage("Press Start to begin cleaning water for Charity Water.");
+  setMessage("Press Start to begin cleaning the beach for Charity Water.");
   update();
 }
 
@@ -241,7 +285,7 @@ function win() {
   clearInterval(spawnTimer);
   const donationAmount = Math.floor(score / 100);
   setMessage(
-    `🎉 You cleaned the ocean! Great job! ${donationAmount} donation${donationAmount === 1 ? "" : "s"} toward Charity Water.`
+    `🎉 You cleaned the shore! Great job! ${donationAmount} donation${donationAmount === 1 ? "" : "s"} toward Charity Water.`
   );
   createConfetti();
   update();

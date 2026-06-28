@@ -6,7 +6,7 @@
 }
 
 body {
-  background: radial-gradient(circle at top, #e0f7ff 0%, #b3e5fc 25%, #80deea 55%, #00b4d8 100%);
+  background: linear-gradient(180deg, #8edcff 0%, #4dc6f6 35%, #1fa8cc 70%, #0d6f86 100%);
   min-height: 100vh;
   color: #012a40;
   text-align: center;
@@ -21,15 +21,16 @@ header.brand-header {
 }
 
 .brand-logo {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7d6 100%);
+  border: 3px solid #ffb703;
+  border-radius: 20px;
   padding: 8px;
-  box-shadow: 0 10px 20px rgba(0, 94, 141, 0.16);
+  box-shadow: 0 12px 24px rgba(0, 94, 141, 0.24);
 }
 
 .brand-logo img {
@@ -52,25 +53,10 @@ h1 {
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  background: linear-gradient(135deg, rgba(255, 213, 79, 0.18), rgba(22, 160, 133, 0.18));
+  background: linear-gradient(135deg, rgba(255, 213, 79, 0.22), rgba(22, 160, 133, 0.22));
   padding: 8px 12px;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
-}
-
-.charity-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #0077a3;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  box-shadow: 0 8px 18px rgba(0, 119, 163, 0.14);
 }
 
 .dashboard {
@@ -81,7 +67,7 @@ h1 {
   margin: 0 auto 14px;
   max-width: 960px;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 16px;
   box-shadow: 0 12px 30px rgba(2, 49, 79, 0.12);
   font-size: 1rem;
@@ -157,9 +143,20 @@ button:disabled {
   margin: 0 auto 24px;
   border: 4px solid rgba(255, 255, 255, 0.65);
   border-radius: 28px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(1,87,155,0.55));
+  background: linear-gradient(180deg, #7ad4ff 0%, #3fb7e6 32%, #1a8dc0 62%, #0f5b72 100%);
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 44, 83, 0.18);
+}
+
+#gameArea::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.95) 0 2%, transparent 3%),
+    radial-gradient(circle at 80% 16%, rgba(255, 255, 255, 0.68) 0 1.8%, transparent 2.8%),
+    linear-gradient(180deg, transparent 0 68%, rgba(255, 207, 95, 0.78) 68% 100%);
+  pointer-events: none;
 }
 
 #oceanOverlay {
@@ -169,6 +166,73 @@ button:disabled {
     radial-gradient(circle at 80% 20%, rgba(255,255,255,0.16) 0%, transparent 10%),
     radial-gradient(circle at 50% 70%, rgba(255,255,255,0.08) 0%, transparent 15%);
   pointer-events: none;
+}
+
+.beach-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sun {
+  position: absolute;
+  top: 24px;
+  right: 30px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3b3 0%, #ffd166 55%, #ffb703 100%);
+  box-shadow: 0 0 48px rgba(255, 214, 102, 0.65);
+}
+
+.wave {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  opacity: 0.8;
+}
+
+.wave-one {
+  bottom: 96px;
+  animation: sway 8s ease-in-out infinite;
+}
+
+.wave-two {
+  bottom: 70px;
+  animation: sway 11s ease-in-out infinite reverse;
+}
+
+.sandbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, #ffd87d 0%, #f6bb4d 100%);
+  clip-path: polygon(0 100%, 0 40%, 7% 48%, 16% 38%, 24% 52%, 35% 36%, 46% 56%, 58% 38%, 71% 54%, 82% 36%, 95% 50%, 100% 36%, 100% 100%);
+}
+
+.shell {
+  position: absolute;
+  bottom: 92px;
+  font-size: 1.35rem;
+  opacity: 0.75;
+  animation: bob 3s ease-in-out infinite;
+}
+
+.shell-one { left: 10%; }
+.shell-two { right: 16%; animation-delay: 1.2s; }
+
+.starfish {
+  position: absolute;
+  left: 48%;
+  bottom: 84px;
+  font-size: 1.4rem;
+  animation: bob 2.4s ease-in-out infinite;
 }
 
 #trashBin {
@@ -186,12 +250,12 @@ button:disabled {
   border-radius: 22px;
   font-size: 0.95rem;
   font-weight: 800;
-  z-index: 10;
+  z-index: 15;
   box-shadow: 0 18px 36px rgba(0, 87, 135, 0.3);
 }
 
 #trashBin::before {
-  content: "💧";
+  content: "🌊";
   font-size: 1.6rem;
   margin-bottom: 6px;
 }
@@ -209,6 +273,7 @@ button:disabled {
   transform: translateZ(0);
   transition: transform 0.12s ease, opacity 0.25s ease;
   touch-action: none;
+  z-index: 5;
 }
 
 .item:active {
@@ -224,6 +289,13 @@ button:disabled {
   border: 2px solid #81d4fa;
 }
 
+.jellyfish,
+.seaweed,
+.crab {
+  border: 2px solid #ff7a59;
+  background: rgba(255, 244, 238, 0.96);
+}
+
 .item span,
 .item::before {
   font-size: 1.1em;
@@ -232,6 +304,16 @@ button:disabled {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .item {

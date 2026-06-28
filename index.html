@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Charity Water Cleanup</title>
+  <title>Beach Cleanup Adventure</title>
 
   <link rel="stylesheet" href="style.css"/>
 </head>
@@ -12,17 +12,16 @@
 
 <header class="brand-header">
   <div class="brand-logo">
-    <img src="images.png" alt="Ocean Clean Up logo" width="52" height="52" />
+    <img src="Unknown-3.png" alt="Beach cleanup logo" width="52" height="52" />
   </div>
   <div>
-    <h1>Charity Water Cleanup</h1>
+    <h1>Beach Cleanup Adventure</h1>
     <div class="donation-note">Every 100 pts = $1 donated toward Charity Water</div>
   </div>
 </header>
 
 <main>
 
-  <!-- DASHBOARD -->
   <div class="dashboard">
     <div>Score: <span id="score">0</span></div>
     <div>Best: <span id="highScore">0</span></div>
@@ -31,26 +30,32 @@
     <div>Lives: <span id="lives">3</span></div>
   </div>
 
-  <!-- CONTROLS -->
   <div class="controls">
     <button id="startBtn">Start Game</button>
     <button id="resetBtn">Reset Game</button>
   </div>
 
-  <div id="message" aria-live="polite">Press Start to begin cleaning water. Every 100 pts = $1 donated toward Charity Water.</div>
+  <div id="message" aria-live="polite">Press Start to begin cleaning the beach shore. Every 100 pts = $1 donated toward Charity Water.</div>
   <div id="cleanMeter" aria-label="Water cleanliness">
     <div id="cleanBar"></div>
   </div>
 
-  <!-- GAME AREA -->
   <section id="gameArea">
     <div id="oceanOverlay"></div>
-    <div id="trashBin" aria-label="Clean Water Bin">💧 CLEAN</div>
+    <div class="beach-scene" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="wave wave-one"></div>
+      <div class="wave wave-two"></div>
+      <div class="sandbar"></div>
+      <div class="shell shell-one">🐚</div>
+      <div class="shell shell-two">🐚</div>
+      <div class="starfish">⭐</div>
+    </div>
+    <div id="trashBin" aria-label="Clean Water Bin">🌊 CLEAN</div>
   </section>
 
 </main>
 
-<!-- IMPORTANT: LINK YOUR GAME LOGIC -->
 <script src="script.js" defer></script>
 
 </body>
