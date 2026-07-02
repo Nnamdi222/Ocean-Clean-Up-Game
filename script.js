@@ -227,6 +227,52 @@ function clearItems() {
   gameArea.querySelectorAll(".item").forEach((item) => item.remove());
 }
 
+function getSpawnPosition(size) {
+  const areaRect = gameArea.getBoundingClientRect();
+  const safeWidth = Math.max(areaRect.width - size - 24, 0);
+  const safeHeight = Math.max(areaRect.height - size - 120, 0);
+  const anchorPoints = [
+    { x: 0.12, y: 0.2 },
+    { x: 0.34, y: 0.16 },
+    { x: 0.62, y: 0.2 },
+    { x: 0.82, y: 0.16 },
+    { x: 0.18, y: 0.44 },
+    { x: 0.5, y: 0.42 },
+    { x: 0.74, y: 0.46 },
+    { x: 0.28, y: 0.68 },
+    { x: 0.64, y: 0.7 }
+  ];
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const anchor = anchorPoints[Math.floor(Math.random() * anchorPoints.length)];
+    const jitterX = (Math.random() - 0.5) * 0.16 * safeWidth;
+    const jitterY = (Math.random() - 0.5) * 0.14 * safeHeight;
+    const left = clamp(anchor.x * safeWidth + jitterX, 0, safeWidth);
+    const top = clamp(anchor.y * safeHeight + jitterY, 0, safeHeight);
+
+    const candidateRect = {
+      left: left + areaRect.left,
+      top: top + areaRect.top,
+      right: left + size + areaRect.left,
+      bottom: top + size + areaRect.top
+    };
+
+    const overlapsExisting = Array.from(gameArea.querySelectorAll(".item")).some((existingItem) => {
+      const existingRect = existingItem.getBoundingClientRect();
+      return candidateRect.right > existingRect.left && candidateRect.left < existingRect.right && candidateRect.bottom > existingRect.top && candidateRect.top < existingRect.bottom;
+    });
+
+    if (!overlapsExisting) {
+      return { left, top };
+    }
+  }
+
+  return {
+    left: Math.random() * safeWidth,
+    top: Math.random() * safeHeight
+  };
+}
+
 function updateDifficultyButtons() {
   document.querySelectorAll(".difficulty-btn").forEach((button) => {
     const isActive = button.dataset.difficulty === currentDifficulty;
@@ -282,10 +328,9 @@ function spawn() {
   item.style.lineHeight = `${size}px`;
   item.style.fontSize = `${size * 0.75}px`;
 
-  const maxX = Math.max(gameArea.clientWidth - size, 0);
-  const maxY = Math.max(gameArea.clientHeight - size - 100, 0);
-  item.style.left = `${Math.random() * maxX}px`;
-  item.style.top = `${Math.random() * maxY}px`;
+  const position = getSpawnPosition(size);
+  item.style.left = `${position.left}px`;
+  item.style.top = `${position.top}px`;
   item.style.opacity = "0";
 
   requestAnimationFrame(() => {
