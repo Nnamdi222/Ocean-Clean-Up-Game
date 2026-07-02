@@ -296,6 +296,40 @@ button:disabled {
   margin-bottom: 6px;
 }
 
+.charity-footer {
+  margin: 0 auto 24px;
+  padding: 16px 20px;
+  max-width: 760px;
+  background: rgba(7, 50, 75, 0.92);
+  color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 26px rgba(7, 50, 75, 0.18);
+  text-align: center;
+}
+
+.charity-footer p {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #8BD1CB;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .item {
   position: absolute;
   display: flex;
