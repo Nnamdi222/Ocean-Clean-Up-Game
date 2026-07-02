@@ -1,14 +1,23 @@
+:root {
+  --primary: #8BD1CB;
+  --secondary: #2E9DF7;
+  --accent: #159A48;
+  --deep-blue: #0A4A6E;
+  --ink: #07324B;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
 }
 
 body {
-  background: linear-gradient(180deg, #8edcff 0%, #4dc6f6 35%, #1fa8cc 70%, #0d6f86 100%);
+  background: linear-gradient(180deg, #a9e6df 0%, var(--primary) 28%, #64c9f0 58%, var(--secondary) 78%, #0c5277 100%);
   min-height: 100vh;
-  color: #012a40;
+  color: var(--ink);
   text-align: center;
 }
 
@@ -26,11 +35,11 @@ header.brand-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ffffff 0%, #fff7d6 100%);
-  border: 3px solid #ffb703;
+  background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+  border: 3px solid var(--accent);
   border-radius: 20px;
   padding: 8px;
-  box-shadow: 0 12px 24px rgba(0, 94, 141, 0.24);
+  box-shadow: 0 12px 24px rgba(10, 74, 110, 0.24);
 }
 
 .brand-logo img {
@@ -44,19 +53,19 @@ header.brand-header {
 h1 {
   font-size: clamp(2rem, 2.5vw, 3rem);
   letter-spacing: -0.03em;
-  color: #012a40;
+  color: var(--ink);
 }
 
 .donation-note {
   margin-top: 8px;
-  color: #012a40;
+  color: var(--ink);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  background: linear-gradient(135deg, rgba(255, 213, 79, 0.22), rgba(22, 160, 133, 0.22));
+  background: linear-gradient(135deg, rgba(139, 209, 203, 0.45), rgba(46, 157, 247, 0.3));
   padding: 8px 12px;
   border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 6px 14px rgba(7, 50, 75, 0.12);
 }
 
 .dashboard {
@@ -89,20 +98,23 @@ button {
   padding: 12px 20px;
   border: none;
   border-radius: 999px;
-  background: #00b4d8;
+  background: linear-gradient(135deg, var(--secondary) 0%, #176fbb 100%);
   color: white;
   font-weight: 700;
-  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 10px 20px rgba(12, 82, 119, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   cursor: pointer;
 }
 
 button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  background: #0096c7;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(12, 82, 119, 0.3);
+  background: linear-gradient(135deg, var(--accent) 0%, #0f7f41 100%);
 }
 
 button:disabled {
-  background: #8bcfe5;
+  background: linear-gradient(135deg, #a8dfe9 0%, #7fc3ef 100%);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
@@ -132,7 +144,7 @@ button:disabled {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #00b4d8 0%, #0096c7 100%);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 55%, var(--accent) 100%);
   transition: width 0.25s ease;
 }
 
@@ -141,11 +153,11 @@ button:disabled {
   width: min(90%, 1080px);
   min-height: 480px;
   margin: 0 auto 24px;
-  border: 4px solid rgba(255, 255, 255, 0.65);
+  border: 4px solid rgba(255, 255, 255, 0.7);
   border-radius: 28px;
-  background: linear-gradient(180deg, #7ad4ff 0%, #3fb7e6 32%, #1a8dc0 62%, #0f5b72 100%);
+  background: linear-gradient(180deg, #bff2eb 0%, var(--primary) 30%, #5ec9ef 62%, #0f5b72 100%);
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0, 44, 83, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 44, 83, 0.22);
 }
 
 #gameArea::before {
@@ -182,8 +194,8 @@ button:disabled {
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff3b3 0%, #ffd166 55%, #ffb703 100%);
-  box-shadow: 0 0 48px rgba(255, 214, 102, 0.65);
+  background: radial-gradient(circle, #fff6c5 0%, #ffd166 52%, #ffb703 100%);
+  box-shadow: 0 0 54px rgba(255, 214, 102, 0.8);
 }
 
 .wave {
@@ -241,19 +253,13 @@ button:disabled {
   right: 16px;
   width: 120px;
   height: 120px;
-  background: linear-gradient(180deg, #00b4d8 0%, #0077a3 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
   color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 22px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  z-index: 15;
-  box-shadow: 0 18px 36px rgba(0, 87, 135, 0.3);
-}
-
 #trashBin::before {
   content: "🌊";
   font-size: 1.6rem;

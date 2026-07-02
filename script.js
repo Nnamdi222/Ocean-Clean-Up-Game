@@ -12,6 +12,15 @@ const messageEl = document.getElementById("message");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 
+const pointSound = new Audio("point.mp3");
+pointSound.preload = "auto";
+
+const winSound = new Audio("win.mp3");
+winSound.preload = "auto";
+
+const lossSound = new Audio("loss.mp3");
+lossSound.preload = "auto";
+
 let score = 0;
 let clean = 0;
 let time = 60;
@@ -86,6 +95,27 @@ function update() {
 
 function setMessage(text) {
   messageEl.textContent = text;
+}
+
+function playPointSound() {
+  pointSound.currentTime = 0;
+  pointSound.play().catch(() => {
+    // Ignore autoplay restrictions or missing audio support.
+  });
+}
+
+function playWinSound() {
+  winSound.currentTime = 0;
+  winSound.play().catch(() => {
+    // Ignore autoplay restrictions or missing audio support.
+  });
+}
+
+function playLossSound() {
+  lossSound.currentTime = 0;
+  lossSound.play().catch(() => {
+    // Ignore autoplay restrictions or missing audio support.
+  });
 }
 
 function createConfetti() {
@@ -215,10 +245,15 @@ function attachDrag(item) {
 
       if (hit) {
         const itemConfig = itemTypes[item.dataset.type];
-        score = Math.max(0, score + (itemConfig.score || 0));
+        const scoreGain = itemConfig.score || 0;
+        score = Math.max(0, score + scoreGain);
         clean = clamp(clean + (itemConfig.clean || 0), 0, CLEAN_GOAL);
         lives = Math.max(0, lives + (itemConfig.life || 0));
         setMessage(itemConfig.message);
+
+        if (scoreGain > 0) {
+          playPointSound();
+        }
 
         item.remove();
         update();
@@ -287,6 +322,7 @@ function win() {
   setMessage(
     `🎉 You cleaned the shore! Great job! ${donationAmount} donation${donationAmount === 1 ? "" : "s"} toward Charity Water.`
   );
+  playWinSound();
   createConfetti();
   update();
 }
@@ -297,6 +333,7 @@ function lose() {
   clearInterval(timer);
   clearInterval(spawnTimer);
   setMessage("💀 Game Over — try again and beat your best score!");
+  playLossSound();
   update();
 }
 
