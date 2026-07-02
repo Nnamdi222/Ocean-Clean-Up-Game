@@ -79,6 +79,15 @@ let currentCleanGoal = difficultyMap[currentDifficulty].cleanGoal;
 let currentSpawnBase = difficultyMap[currentDifficulty].spawnBase;
 let currentTimeLimit = difficultyMap[currentDifficulty].timeLimit;
 
+const milestoneMessages = [
+  { threshold: 10, text: "🌟 Halfway there! Keep the shoreline sparkling." },
+  { threshold: 20, text: "💧 Great momentum — the beach is getting brighter." },
+  { threshold: 30, text: "🌊 Fantastic work! You are making a real splash." },
+  { threshold: 40, text: "🏖️ Amazing cleanup energy — the shore looks better already." }
+];
+
+let reachedMilestones = new Set();
+
 const itemTypes = {
   trash: {
     className: "trash",
@@ -140,6 +149,15 @@ function update() {
 
 function setMessage(text) {
   messageEl.textContent = text;
+}
+
+function checkMilestones() {
+  milestoneMessages.forEach((milestone) => {
+    if (score >= milestone.threshold && !reachedMilestones.has(milestone.threshold)) {
+      reachedMilestones.add(milestone.threshold);
+      setMessage(milestone.text);
+    }
+  });
 }
 
 function playPointSound() {
@@ -330,6 +348,7 @@ function attachDrag(item) {
         }
 
         item.remove();
+        checkMilestones();
         update();
 
         if (clean >= currentCleanGoal) {
@@ -354,6 +373,7 @@ function startGame() {
   clean = 0;
   time = mode.timeLimit;
   lives = mode.initialLives;
+  reachedMilestones = new Set();
   currentCleanGoal = mode.cleanGoal;
   currentSpawnBase = mode.spawnBase;
   currentTimeLimit = mode.timeLimit;
@@ -387,6 +407,7 @@ function resetGame() {
   clean = 0;
   time = mode.timeLimit;
   lives = mode.initialLives;
+  reachedMilestones = new Set();
   currentCleanGoal = mode.cleanGoal;
   currentSpawnBase = mode.spawnBase;
   currentTimeLimit = mode.timeLimit;
