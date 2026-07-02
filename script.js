@@ -152,12 +152,13 @@ function setMessage(text) {
 }
 
 function checkMilestones() {
-  milestoneMessages.forEach((milestone) => {
+  for (let step = 0; step < milestoneMessages.length; step += 1) {
+    const milestone = milestoneMessages[step];
     if (score >= milestone.threshold && !reachedMilestones.has(milestone.threshold)) {
       reachedMilestones.add(milestone.threshold);
       setMessage(milestone.text);
     }
-  });
+  }
 }
 
 function playPointSound() {
@@ -244,7 +245,8 @@ function getSpawnPosition(size) {
   ];
 
   for (let attempt = 0; attempt < 10; attempt += 1) {
-    const anchor = anchorPoints[Math.floor(Math.random() * anchorPoints.length)];
+    const anchorIndex = Math.floor(Math.random() * anchorPoints.length);
+    const anchor = anchorPoints[anchorIndex];
     const jitterX = (Math.random() - 0.5) * 0.16 * safeWidth;
     const jitterY = (Math.random() - 0.5) * 0.14 * safeHeight;
     const left = clamp(anchor.x * safeWidth + jitterX, 0, safeWidth);
@@ -314,37 +316,39 @@ function getRandomType() {
 function spawn() {
   if (!running) return;
 
-  const item = document.createElement("div");
-  const type = getRandomType();
-  const itemConfig = itemTypes[type];
+  for (let step = 0; step < 1; step += 1) {
+    const item = document.createElement("div");
+    const type = getRandomType();
+    const itemConfig = itemTypes[type];
 
-  item.className = `item ${itemConfig.className}`;
-  item.textContent = itemConfig.emoji;
-  item.dataset.type = type;
+    item.className = `item ${itemConfig.className}`;
+    item.textContent = itemConfig.emoji;
+    item.dataset.type = type;
 
-  const size = 34 + Math.random() * 18;
-  item.style.width = `${size}px`;
-  item.style.height = `${size}px`;
-  item.style.lineHeight = `${size}px`;
-  item.style.fontSize = `${size * 0.75}px`;
+    const size = 34 + Math.random() * 18;
+    item.style.width = `${size}px`;
+    item.style.height = `${size}px`;
+    item.style.lineHeight = `${size}px`;
+    item.style.fontSize = `${size * 0.75}px`;
 
-  const position = getSpawnPosition(size);
-  item.style.left = `${position.left}px`;
-  item.style.top = `${position.top}px`;
-  item.style.opacity = "0";
+    const position = getSpawnPosition(size);
+    item.style.left = `${position.left}px`;
+    item.style.top = `${position.top}px`;
+    item.style.opacity = "0";
 
-  requestAnimationFrame(() => {
-    item.style.opacity = "1";
-  });
+    requestAnimationFrame(() => {
+      item.style.opacity = "1";
+    });
 
-  attachDrag(item);
-  gameArea.appendChild(item);
+    attachDrag(item);
+    gameArea.appendChild(item);
 
-  setTimeout(() => {
-    if (item.isConnected) {
-      item.remove();
-    }
-  }, 6500);
+    setTimeout(() => {
+      if (item.isConnected) {
+        item.remove();
+      }
+    }, 6500);
+  }
 }
 
 function attachDrag(item) {
@@ -352,6 +356,7 @@ function attachDrag(item) {
     if (!running) return;
 
     event.preventDefault();
+    item.classList.add("dragging");
     item.setPointerCapture(event.pointerId);
 
     const areaRect = gameArea.getBoundingClientRect();
@@ -370,6 +375,7 @@ function attachDrag(item) {
     function drop(e) {
       document.removeEventListener("pointermove", move);
       document.removeEventListener("pointerup", drop);
+      item.classList.remove("dragging");
       item.releasePointerCapture(e.pointerId);
 
       const binRect = bin.getBoundingClientRect();
