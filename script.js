@@ -31,9 +31,53 @@ let running = false;
 let timer;
 let spawnTimer;
 
-const MAX_TIME = 60;
-const SPAWN_BASE = 700;
-const CLEAN_GOAL = 100;
+const difficultyModes = [
+  {
+    id: "easy",
+    label: "Easy",
+    timeLimit: 90,
+    cleanGoal: 80,
+    initialLives: 4,
+    spawnBase: 900,
+    trashWeight: 0.7,
+    fishWeight: 0.15,
+    jellyfishWeight: 0.08,
+    seaweedWeight: 0.04,
+    crabWeight: 0.03
+  },
+  {
+    id: "normal",
+    label: "Normal",
+    timeLimit: 60,
+    cleanGoal: 100,
+    initialLives: 3,
+    spawnBase: 700,
+    trashWeight: 0.55,
+    fishWeight: 0.2,
+    jellyfishWeight: 0.1,
+    seaweedWeight: 0.08,
+    crabWeight: 0.07
+  },
+  {
+    id: "hard",
+    label: "Hard",
+    timeLimit: 45,
+    cleanGoal: 100,
+    initialLives: 2,
+    spawnBase: 500,
+    trashWeight: 0.4,
+    fishWeight: 0.25,
+    jellyfishWeight: 0.15,
+    seaweedWeight: 0.1,
+    crabWeight: 0.1
+  }
+];
+
+const difficultyMap = Object.fromEntries(difficultyModes.map((mode) => [mode.id, mode]));
+let currentDifficulty = "normal";
+let currentCleanGoal = difficultyMap[currentDifficulty].cleanGoal;
+let currentSpawnBase = difficultyMap[currentDifficulty].spawnBase;
+let currentTimeLimit = difficultyMap[currentDifficulty].timeLimit;
 
 const itemTypes = {
   trash: {
@@ -86,8 +130,9 @@ function update() {
 
   scoreEl.textContent = score;
   highScoreEl.textContent = bestScore;
-  cleanEl.textContent = `${clean}%`;
-  cleanBarEl.style.width = `${clean}%`;
+  cleanEl.textContent = `${clean}/${currentCleanGoal}`;
+  const cleanProgress = currentCleanGoal > 0 ? (clean / currentCleanGoal) * 100 : 0;
+  cleanBarEl.style.width = `${clamp(cleanProgress, 0, 100)}%`;
   timerEl.textContent = time < 10 ? `0${time}` : time;
   livesEl.textContent = lives;
   startBtn.disabled = running;
@@ -164,12 +209,41 @@ function clearItems() {
   gameArea.querySelectorAll(".item").forEach((item) => item.remove());
 }
 
+function updateDifficultyButtons() {
+  document.querySelectorAll(".difficulty-btn").forEach((button) => {
+    const isActive = button.dataset.difficulty === currentDifficulty;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function setDifficulty(modeId) {
+  const mode = difficultyMap[modeId];
+  if (!mode) return;
+
+  currentDifficulty = modeId;
+  currentCleanGoal = mode.cleanGoal;
+  currentSpawnBase = mode.spawnBase;
+  currentTimeLimit = mode.timeLimit;
+  updateDifficultyButtons();
+
+  if (!running) {
+    setMessage(`${mode.label} mode ready: ${mode.timeLimit}s, ${mode.cleanGoal}% cleanup goal, and ${mode.initialLives} lives.`);
+  }
+}
+
 function getRandomType() {
+  const mode = difficultyMap[currentDifficulty];
   const roll = Math.random();
-  if (roll < 0.55) return "trash";
-  if (roll < 0.75) return "fish";
-  if (roll < 0.87) return "jellyfish";
-  if (roll < 0.94) return "seaweed";
+  const trashWeight = mode.trashWeight;
+  const fishWeight = trashWeight + mode.fishWeight;
+  const jellyWeight = fishWeight + mode.jellyfishWeight;
+  const seaweedWeight = jellyWeight + mode.seaweedWeight;
+
+  if (roll < trashWeight) return "trash";
+  if (roll < fishWeight) return "fish";
+  if (roll < jellyWeight) return "jellyfish";
+  if (roll < seaweedWeight) return "seaweed";
   return "crab";
 }
 
@@ -247,7 +321,7 @@ function attachDrag(item) {
         const itemConfig = itemTypes[item.dataset.type];
         const scoreGain = itemConfig.score || 0;
         score = Math.max(0, score + scoreGain);
-        clean = clamp(clean + (itemConfig.clean || 0), 0, CLEAN_GOAL);
+        clean = clamp(clean + (itemConfig.clean || 0), 0, currentCleanGoal);
         lives = Math.max(0, lives + (itemConfig.life || 0));
         setMessage(itemConfig.message);
 
@@ -258,7 +332,7 @@ function attachDrag(item) {
         item.remove();
         update();
 
-        if (clean >= CLEAN_GOAL) {
+        if (clean >= currentCleanGoal) {
           win();
         } else if (lives <= 0) {
           lose();
@@ -274,14 +348,18 @@ function attachDrag(item) {
 function startGame() {
   if (running) return;
 
+  const mode = difficultyMap[currentDifficulty];
   running = true;
   score = 0;
   clean = 0;
-  time = MAX_TIME;
-  lives = 3;
+  time = mode.timeLimit;
+  lives = mode.initialLives;
+  currentCleanGoal = mode.cleanGoal;
+  currentSpawnBase = mode.spawnBase;
+  currentTimeLimit = mode.timeLimit;
 
   clearItems();
-  setMessage("Drag trash into the bin, dodge beach hazards, and keep the shore sparkling for 60 seconds!");
+  setMessage(`Drag trash into the bin, dodge beach hazards, and clean ${mode.cleanGoal}% of the shore in ${mode.timeLimit}s!`);
   update();
 
   clearInterval(timer);
@@ -296,7 +374,7 @@ function startGame() {
     update();
   }, 1000);
 
-  spawnTimer = setInterval(spawn, SPAWN_BASE);
+  spawnTimer = setInterval(spawn, currentSpawnBase);
   spawn();
 }
 
@@ -304,10 +382,14 @@ function resetGame() {
   running = false;
   clearInterval(timer);
   clearInterval(spawnTimer);
+  const mode = difficultyMap[currentDifficulty];
   score = 0;
   clean = 0;
-  time = MAX_TIME;
-  lives = 3;
+  time = mode.timeLimit;
+  lives = mode.initialLives;
+  currentCleanGoal = mode.cleanGoal;
+  currentSpawnBase = mode.spawnBase;
+  currentTimeLimit = mode.timeLimit;
   clearItems();
   setMessage("Press Start to begin cleaning the beach for Charity Water.");
   update();
@@ -340,4 +422,9 @@ function lose() {
 startBtn.addEventListener("click", startGame);
 resetBtn.addEventListener("click", resetGame);
 
+document.querySelectorAll(".difficulty-btn").forEach((button) => {
+  button.addEventListener("click", () => setDifficulty(button.dataset.difficulty));
+});
+
+updateDifficultyButtons();
 update();

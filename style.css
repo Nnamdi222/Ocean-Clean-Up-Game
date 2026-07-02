@@ -91,7 +91,15 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 14px;
-  margin: 12px auto 18px;
+  margin: 12px auto 8px;
+}
+
+.difficulty-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 16px;
+  flex-wrap: wrap;
 }
 
 button {
@@ -116,6 +124,28 @@ button:disabled {
   background: linear-gradient(135deg, #a8dfe9 0%, #7fc3ef 100%);
   box-shadow: none;
   cursor: not-allowed;
+}
+
+.difficulty-btn {
+  padding: 10px 14px;
+  border: 2px solid rgba(46, 157, 247, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--deep-blue);
+  box-shadow: none;
+  font-size: 0.95rem;
+}
+
+.difficulty-btn.active {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.difficulty-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(12, 82, 119, 0.18);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
 }
 
 #message {
